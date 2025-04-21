@@ -18,7 +18,7 @@ class UserManagementController extends Controller
 
     public function index()
     {
-        if (!auth()->user()->isAbleTo('user-list')) {
+        if (!auth()->user()->isAbleTo('users-read')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -28,7 +28,7 @@ class UserManagementController extends Controller
 
     public function create()
     {
-        if (!auth()->user()->isAbleTo('user-create')) {
+        if (!auth()->user()->isAbleTo('users-create')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -38,7 +38,7 @@ class UserManagementController extends Controller
 
     public function store(Request $request)
     {
-        if (!auth()->user()->isAbleTo('user-create')) {
+        if (!auth()->user()->isAbleTo('users-create')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -56,7 +56,7 @@ class UserManagementController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        $user->attachRoles($request->roles);
+        $user->addRoles($request->roles);
 
         return redirect()->route('tenant.users.index')
             ->with('success', 'User created successfully.');
@@ -64,7 +64,7 @@ class UserManagementController extends Controller
 
     public function show(User $user)
     {
-        if (!auth()->user()->isAbleTo('user-view')) {
+        if (!auth()->user()->isAbleTo('users-read')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -73,7 +73,7 @@ class UserManagementController extends Controller
 
     public function edit(User $user)
     {
-        if (!auth()->user()->isAbleTo('user-edit')) {
+        if (!auth()->user()->isAbleTo('users-update')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -83,7 +83,7 @@ class UserManagementController extends Controller
 
     public function update(Request $request, User $user)
     {
-        if (!auth()->user()->isAbleTo('user-edit')) {
+        if (!auth()->user()->isAbleTo('users-update')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -114,7 +114,7 @@ class UserManagementController extends Controller
 
     public function destroy(User $user)
     {
-        if (!auth()->user()->isAbleTo('user-delete')) {
+        if (!auth()->user()->isAbleTo('users-delete')) {
             abort(403, 'Unauthorized action.');
         }
 

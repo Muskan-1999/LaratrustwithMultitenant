@@ -6,6 +6,8 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\TenantLaratrustController;
+use App\Http\Controllers\ArticleController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -60,17 +62,55 @@ Route::middleware([
             ->name('tenant.verification.send');
 
         // User Management routes
-        Route::prefix('users')->name('tenant.users.')->group(function () {
+        Route::prefix('users')->name('tenant.users.')->middleware(['permission:users-read|users-create|users-update|users-delete'])->group(function () {
             Route::get('/', [UserManagementController::class, 'index'])->name('index');
-            Route::get('/create', [UserManagementController::class, 'create'])->name('create');
-            Route::post('/', [UserManagementController::class, 'store'])->name('store');
-            Route::get('/{user}/edit', [UserManagementController::class, 'edit'])->name('edit');
-            Route::put('/{user}', [UserManagementController::class, 'update'])->name('update');
-            Route::delete('/{user}', [UserManagementController::class, 'destroy'])->name('destroy');
-            Route::get('/{user}', [UserManagementController::class, 'show'])->name('show');
+            Route::get('/create', [UserManagementController::class, 'create'])->name('create')->middleware('permission:users-create');
+            Route::post('/', [UserManagementController::class, 'store'])->name('store')->middleware('permission:users-create');
+            Route::get('/{user}/edit', [UserManagementController::class, 'edit'])->name('edit')->middleware('permission:users-update');
+            Route::put('/{user}', [UserManagementController::class, 'update'])->name('update')->middleware('permission:users-update');
+            Route::delete('/{user}', [UserManagementController::class, 'destroy'])->name('destroy')->middleware('permission:users-delete');
+            Route::get('/{user}', [UserManagementController::class, 'show'])->name('show')->middleware('permission:users-read');
+        });
+
+        // Article Management routes
+        Route::prefix('articles')->name('tenant.articles.')->middleware(['permission:articles-read|articles-create|articles-update|articles-delete'])->group(function () {
+            Route::get('/', [ArticleController::class, 'index'])->name('index');
+            Route::get('/create', [ArticleController::class, 'create'])->name('create')->middleware('permission:articles-create');
+            Route::post('/', [ArticleController::class, 'store'])->name('store')->middleware('permission:articles-create');
+            Route::get('/{article}', [ArticleController::class, 'show'])->name('show')->middleware('permission:articles-read');
+            Route::get('/{article}/edit', [ArticleController::class, 'edit'])->name('edit')->middleware('permission:articles-update');
+            Route::put('/{article}', [ArticleController::class, 'update'])->name('update')->middleware('permission:articles-update');
+            Route::delete('/{article}', [ArticleController::class, 'destroy'])->name('destroy')->middleware('permission:articles-delete');
         });
 
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
             ->name('tenant.logout');
+
+        // Laratrust Panel Routes
+        Route::group([
+            'prefix' => config('laratrust.panel.path', 'laratrust'),
+            'namespace' => 'Laratrust\Http\Controllers',
+            'middleware' => [
+                'web',
+                InitializeTenancyByDomain::class,
+                PreventAccessFromCentralDomains::class,
+                'auth'
+            ],
+            'as' => 'laratrust.'
+        ], function () {
+            Route::get('/', function() {
+                return redirect()->route('laratrust.roles-assignment.index');
+            });
+            
+            Route::resource('/roles', 'RolesController')->except(['show']);
+            Route::resource('/permissions', 'PermissionsController')->except(['show']);
+            Route::resource('/roles-assignment', 'RolesAssignmentController')
+                ->except(['show', 'create', 'store', 'destroy'])
+                ->names([
+                    'index' => 'roles-assignment.index',
+                    'edit' => 'roles-assignment.edit',
+                    'update' => 'roles-assignment.update'
+                ]);
+        });
     });
 });

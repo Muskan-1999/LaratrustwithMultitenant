@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Hash;
+use Database\Seeders\TenantLaratrustSeeder;
 
 class TenantUserJob implements ShouldQueue
 {
@@ -31,6 +32,10 @@ class TenantUserJob implements ShouldQueue
     public function handle(): void
     {
         $this->tenant->run(function () {
+            // First seed the roles in the tenant database
+            $seeder = new TenantLaratrustSeeder();
+            $seeder->run();
+
             $user = User::create([
                 'name' => $this->tenant->name,
                 'email' => $this->tenant->email,
@@ -38,7 +43,7 @@ class TenantUserJob implements ShouldQueue
             ]);
 
             // Assign admin role if needed
-            // $user->assignRole('admin');
+            $user->addRole('administrator');
         });
     }
 }

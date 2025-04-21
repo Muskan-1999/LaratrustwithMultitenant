@@ -282,7 +282,7 @@ return [
         | Turn this value to false if you don't want to use Laratrust admin panel
         |
         */
-        'register' => false,
+        'register' => true,
 
         /*
         |--------------------------------------------------------------------------
@@ -314,7 +314,7 @@ return [
         | The route where the go back link should point
         |
         */
-        'go_back_route' => '/',
+        'go_back_route' => '/dashboard',
 
         /*
         |--------------------------------------------------------------------------
@@ -324,7 +324,7 @@ return [
         | These middleware will get added onto each Laratrust panel route.
         |
         */
-        'middleware' => ['web'],
+        'middleware' => ['web', 'auth'],
 
         /*
         |--------------------------------------------------------------------------
@@ -365,5 +365,16 @@ return [
             // The user won't be able to delete the role.
             'not_deletable' => [],
         ],
+
+        'user_models' => [
+            'users' => [
+                'model' => \App\Models\User::class,
+                'query' => function ($query) {
+                    return $query->whereHas('tenants', function ($q) {
+                        $q->where('id', tenant()->getId());
+                    });
+                }
+            ]
+        ]
     ],
 ];

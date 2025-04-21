@@ -18,6 +18,12 @@
                     <x-nav-link :href="route('tenant.users.index')" :active="request()->routeIs('tenant.users.*')">
                         {{ __('Users') }}
                     </x-nav-link>
+                    <x-nav-link :href="url('/laratrust')" :active="request()->is('laratrust*')">
+                   {{ __('Roles and Permissions') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('tenant.articles.index')" :active="request()->routeIs('tenant.articles.*')">
+                        {{ __('Articles') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -75,6 +81,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('tenant.users.index')" :active="request()->routeIs('tenant.users.*')">
                 {{ __('Users') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('tenant.articles.index')" :active="request()->routeIs('tenant.articles.*')">
+                {{ __('Articles') }}
             </x-responsive-nav-link>
         </div>
 
