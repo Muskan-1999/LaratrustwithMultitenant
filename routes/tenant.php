@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use App\Models\User;
+use App\Http\Controllers\Tenant\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,10 +45,13 @@ Route::middleware([
 
     // Authenticated routes
     Route::middleware('auth')->group(function () {
-        Route::get('/dashboard', function () {
-            $users = User::paginate(10);
-            return view('tenant.dashboard', compact('users'));
-        })->name('tenant.dashboard');
+        Route::get('/help-center', function () {
+            return view('help_center.index');
+        })->name('tenant.help-center');
+        Route::get('/project', function () {
+            return view('project.project');
+        })->name('tenant.project');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('tenant.dashboard');
 
         // Profile routes
         Route::get('/profile', [ProfileController::class, 'edit'])->name('tenant.profile.edit');
