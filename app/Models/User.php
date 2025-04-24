@@ -6,8 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laratrust\Contracts\LaratrustUser;
 use Laratrust\Traits\HasRolesAndPermissions;
+use Laratrust\Contracts\LaratrustUser;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class User extends Authenticatable implements LaratrustUser
 {
@@ -47,4 +48,9 @@ class User extends Authenticatable implements LaratrustUser
             'password' => 'hashed',
         ];
     }
+
+    public function roles(): MorphToMany
+{
+    return $this->morphToMany(Role::class, 'user', 'role_user', 'user_id', 'role_id');
+}
 }

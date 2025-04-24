@@ -13,6 +13,7 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use App\Models\User;
 use App\Http\Controllers\Tenant\DashboardController;
+use App\Livewire\Tenant\UserTable;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,6 +53,7 @@ Route::middleware([
             return view('project.project');
         })->name('tenant.project');
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('tenant.dashboard');
+        Route::get('/users-management',UserTable::class)->name('tenant.user-management.index');
 
         // Profile routes
         Route::get('/profile', [ProfileController::class, 'edit'])->name('tenant.profile.edit');
