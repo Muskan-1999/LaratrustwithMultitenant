@@ -1,100 +1,67 @@
-<div class="p-4 space-y-6">
-<div class="text-sm breadcrumbs mb-6">
-        <ul>
-            <li>
-                <a href="{{ request()->routeIs('tenant.*') ? route('tenant.dashboard') : route('dashboard') }}" class="flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.75L12 4l9 5.75M4.5 10.5v6.75a.75.75 0 00.75.75H9v-3a1.5 1.5 0 013 0v3h3.75a.75.75 0 00.75-.75V10.5" />
-                    </svg>
-                    <span>Home</span>
-                </a>
-            </li>
-            <li><span>Manage User</span></li>
-        </ul>
+<div class="px-6 py-4">
+    @include('components.layouts.breadcrumbs')
+    <!-- Top Controls Card -->
+    <div class="card bg-base-100 shadow-sm rounded-2xl p-4 mb-6">
+    <div class="flex flex-wrap items-center gap-4">
+    <!-- Layout Buttons -->
+    <div class="flex bg-base-200 rounded-lg overflow-hidden items-center">
+        <button wire:click="setLayout('list')" class="px-3 py-2 h-full {{ $layout === 'list' ? 'bg-neutral text-white' : 'hover:bg-base-300' }}">
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+        </button>
+        <button wire:click="setLayout('grid')" class="px-3 py-2 h-full {{ $layout === 'grid' ? 'bg-neutral text-white' : 'hover:bg-base-300' }}">
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z"/></svg>
+        </button>
+        <button wire:click="setLayout('row')" class="px-3 py-2 h-full {{ $layout === 'row' ? 'bg-neutral text-white' : 'hover:bg-base-300' }}">
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5h18v2H3V5zm0 6h18v2H3v-2zm0 6h18v2H3v-2z"/></svg>
+        </button>
     </div>
 
-    <div class="mb-4">
-        <h2 class="text-3xl font-bold">
-            <span class="italic text-[#f43f1a]">Together</span> we are marbet.
-        </h2>
-    </div>
-    <div class="bg-white p-4 rounded shadow-md">
-    <!-- Top Controls -->
-    <div class="flex flex-wrap items-end justify-between gap-6">
-        <!-- View Buttons -->
-        <div class="flex rounded border overflow-hidden h-[40px]">
-            <button wire:click="setLayout('list')" class="px-3 flex items-center justify-center {{ $layout === 'list' ? 'bg-neutral text-white' : 'bg-gray-100 hover:bg-gray-200' }}">
-                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
-                </svg>
-            </button>
-            <button wire:click="setLayout('grid')" class="px-3 flex items-center justify-center {{ $layout === 'grid' ? 'bg-neutral text-white' : 'bg-gray-100 hover:bg-gray-200' }}">
-                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z"/>
-                </svg>
-            </button>
-            <button wire:click="setLayout('row')" class="px-3 flex items-center justify-center {{ $layout === 'row' ? 'bg-neutral text-white' : 'bg-gray-100 hover:bg-gray-200' }}">
-                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M3 5h18v2H3V5zm0 6h18v2H3v-2zm0 6h18v2H3v-2z"/>
-                </svg>
-            </button>
-        </div>
-
-        <!-- Group and Sort -->
-        <div class="flex gap-1 items-end"> <!-- reduced gap here -->
-    <div class="flex flex-col">
-        <label class="text-sm font-semibold mb-1">Group</label>
-        <select class="select select-sm select-bordered w-[160px]">
+    <!-- Group -->
+    <div class="flex flex-col justify-between h-[58px] w-[85px]">
+        <label class="text-xs font-medium text-neutral-500">Group</label>
+        <select class="select select-sm bg-base-200 text-sm font-medium border-none focus:outline-none">
             <option selected>Client</option>
             <option>Internal</option>
         </select>
     </div>
-    <div class="flex flex-col">
-        <label class="text-sm font-semibold mb-1">Sort</label>
-        <select class="select select-sm select-bordered w-[160px]">
+
+    <!-- Sort -->
+    <div class="flex flex-col justify-between h-[56px] w-[150px]">
+        <label class="text-xs font-medium text-neutral-500">Sort</label>
+        <select class="select select-sm bg-base-200 text-sm font-medium border-none focus:outline-none">
             <option selected>Most Projects</option>
             <option>Least Projects</option>
         </select>
     </div>
-</div>
 
-        <!-- Search and Filter -->
-        <div class="flex gap-2 items-end">
-            <div class="flex flex-col">
-                <label class="text-sm font-semibold mb-1">Search</label>
-                <input type="text" placeholder="Search..." class="input input-sm input-bordered w-[200px]" />
-            </div>
-            <button class="btn btn-sm btn-outline" disabled>RESET</button>
-            <button class="btn btn-sm btn-outline"><i class="fas fa-filter mr-1"></i> FILTER</button>
+        <!-- Search and Buttons -->
+        <div class="flex items-end gap-2 ml-auto">
+            <input type="text" wire:model.live="search" placeholder="Search..." class="input input-sm bg-base-200 border-none w-[200px]" />
+            <button wire:click="resetSearch" type="button" class="btn btn-sm text-xs font-semibold bg-base-200 text-neutral hover:bg-base-300">✕ Reset</button>
+            <button class="btn btn-sm btn-outline text-xs font-semibold gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 019 17v-3.586L3.293 6.707A1 1 0 013 6V4z" />
+                </svg>
+                FILTER
+            </button>
         </div>
     </div>
 </div>
 
 
-{{-- Grid View --}}
-<div class="bg-white p-4 rounded shadow-md mb-6">
+       <!-- Content Section Card (List/Grid/Row) -->
+    <div class="card bg-white shadow-md">
+        <div class="card-body">
+        @if($layout === 'list')
+         @include('components.layouts.list-view')
 
-    <div class="space-y-4">
-        @foreach($roles as $role)
-            <div class="card bg-base-100 shadow border border-gray-200">
-                <div class="card-body flex flex-row items-center justify-between p-4">
-                    <div>
-                    <h2 class="text-2xl font-bold text-neutral">{{ ucfirst($role->name) }}</h2>
-                        <p class="text-sm text-gray-500 mt-1">
-                            <span >{{ $role->users_count }}</span> Users
-                        </p>
-                    </div>
-                     <!-- Open Button -->
-                     <button class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"  d="M19 9l-7 7-7-7" />
-                </svg>
-             </button>
-                </div>
-            </div>
-        @endforeach
+        @elseif($layout === 'grid')
+        {{-- Include your grid view here --}}
+             @include('components.layouts.grid-view')
+           
+        @else($layout === 'row')
+        {{-- Include your row view here --}}
+        @include('components.layouts.row-view')
+        @endif
     </div>
-</div>
-
-
 </div>

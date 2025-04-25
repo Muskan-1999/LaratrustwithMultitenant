@@ -20,7 +20,7 @@
     <body class="font-sans antialiased bg-base-100">
         <div class="min-h-screen">
             <!-- Header -->
-            @include('layouts.header')
+            @include('layouts.tenant-header')
 
             <!-- Sidebar and Main Content -->
             <div class="drawer lg:drawer-open">
@@ -30,7 +30,7 @@
                     {{ $slot }}
                 </main>
             </div>
-         @include('layouts.sidebar')
+         @include('layouts.tenant-sidebar')
         </div>
         </div>
       @livewireScripts

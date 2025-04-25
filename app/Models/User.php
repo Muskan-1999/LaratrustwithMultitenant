@@ -10,6 +10,7 @@ use Laratrust\Traits\HasRolesAndPermissions;
 use Laratrust\Contracts\LaratrustUser;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
+
 class User extends Authenticatable implements LaratrustUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */

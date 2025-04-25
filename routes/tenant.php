@@ -14,6 +14,7 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use App\Models\User;
 use App\Http\Controllers\Tenant\DashboardController;
 use App\Livewire\Tenant\UserTable;
+use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +34,8 @@ Route::middleware([
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
     // Guest routes
-    Route::middleware('guest')->group(function () {
+    Route::get('/users-management',UserTable::class)->name('tenant.user-management.index');
+      Route::middleware('guest')->group(function () {
         Route::get('/', function () {
             return view('tenant.welcome');
         });
@@ -43,7 +45,7 @@ Route::middleware([
 
         Route::post('login', [AuthenticatedSessionController::class, 'store']);
     });
-
+     
     // Authenticated routes
     Route::middleware('auth')->group(function () {
         Route::get('/help-center', function () {
@@ -53,7 +55,7 @@ Route::middleware([
             return view('project.project');
         })->name('tenant.project');
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('tenant.dashboard');
-        Route::get('/users-management',UserTable::class)->name('tenant.user-management.index');
+      
 
         // Profile routes
         Route::get('/profile', [ProfileController::class, 'edit'])->name('tenant.profile.edit');
