@@ -12,13 +12,11 @@
            {{ request()->routeIs('project') || request()->routeIs('tenant.project') ? 'bg-[#f43f1a] text-white' : 'text-gray-800 hover:text-[#f43f1a]' }}">
             Projects
         </a>
-        @if (tenant())
-         <a href="{{ route('tenant.user-management.index') }}"
-         class="text-sm font-semibold px-4 py-2 rounded transition-all
-         {{ request()->routeIs('tenant.user-management.*') ? 'bg-[#f43f1a] text-white' : 'text-gray-800 hover:text-[#f43f1a]' }}">
-          Manage User
-         </a>
-         @endif
+        <a href="{{ request()->routeIs('tenant.*') ? route('tenant.user-management.index') : route('user-management.index') }}"
+           class="text-sm font-semibold px-4 py-2 rounded transition-all
+           {{ request()->routeIs('user-management') || request()->routeIs('tenant.user-management') ? 'bg-[#f43f1a] text-white' : 'text-gray-800 hover:text-[#f43f1a]' }}">
+           ManageUser
+        </a>
 
         <!-- Tenants (central only) -->
         @if (!tenant())

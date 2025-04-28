@@ -14,7 +14,8 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use App\Models\User;
 use App\Http\Controllers\Tenant\DashboardController;
 use App\Livewire\Tenant\UserTable;
-use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
+use App\Livewire\UserInformation;
+// use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,7 @@ Route::middleware([
 ])->group(function () {
     // Guest routes
     Route::get('/users-management',UserTable::class)->name('tenant.user-management.index');
+    Route::get('/users-management/{user}', UserInformation::class)->name('tenant.users-management.show');
       Route::middleware('guest')->group(function () {
         Route::get('/', function () {
             return view('tenant.welcome');

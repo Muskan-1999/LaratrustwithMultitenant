@@ -10,18 +10,16 @@
         <a href="{{ request()->routeIs('tenant.*') ? route('tenant.project') : route('project') }}"
            class="text-sm font-semibold px-4 py-2 rounded transition-all
            {{ request()->routeIs('project') || request()->routeIs('tenant.project') ? 'bg-[#f43f1a] text-white' : 'text-gray-800 hover:text-[#f43f1a]' }}">
-            Projects
+            Project
         </a>
-        @if (tenant())
-         <a href="{{ route('tenant.user-management.index') }}"
-         class="text-sm font-semibold px-4 py-2 rounded transition-all
-         {{ request()->routeIs('tenant.user-management.*') ? 'bg-[#f43f1a] text-white' : 'text-gray-800 hover:text-[#f43f1a]' }}">
-          Manage User
-         </a>
-         @endif
-
+        {{var_dump(tenant());}}
+        <a href="{{ tenant() ? route('tenant.user-management.index') : route('user-management.index') }}"
+           class="text-sm font-semibold px-4 py-2 rounded transition-all"
+        >
+            Manage User
+        </a>
         <!-- Tenants (central only) -->
-        @if (!tenant())
+         @if (!tenant())
             <a href="{{ route('tenants.index') }}"
                class="text-sm font-semibold px-4 py-2 rounded transition-all
                {{ request()->routeIs('tenants.*') ? 'bg-[#f43f1a] text-white' : 'text-gray-800 hover:text-[#f43f1a]' }}">
