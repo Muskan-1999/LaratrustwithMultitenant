@@ -14,15 +14,15 @@
         </a>
         <a href="{{ request()->routeIs('tenant.*') ? route('tenant.user-management.index') : route('user-management.index') }}"
            class="text-sm font-semibold px-4 py-2 rounded transition-all
-           {{ request()->routeIs('user-management') || request()->routeIs('tenant.user-management') ? 'bg-[#f43f1a] text-white' : 'text-gray-800 hover:text-[#f43f1a]' }}">
+           {{ request()->routeIs('user-management.index') || request()->routeIs('tenant.user-management.index') ? 'bg-[#f43f1a] text-white' : 'text-gray-800 hover:text-[#f43f1a]' }}">
            ManageUser
         </a>
 
         <!-- Tenants (central only) -->
         @if (!tenant())
-            <a href="{{ route('tenants.index') }}"
+            <a href="{{ route('tenant-list') }}"
                class="text-sm font-semibold px-4 py-2 rounded transition-all
-               {{ request()->routeIs('tenants.*') ? 'bg-[#f43f1a] text-white' : 'text-gray-800 hover:text-[#f43f1a]' }}">
+               {{ request()->routeIs('tenant-list') ? 'bg-[#f43f1a] text-white' : 'text-gray-800 hover:text-[#f43f1a]' }}">
                 Tenants
             </a>
         @endif

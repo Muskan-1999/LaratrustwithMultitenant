@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
             $this->call(CentralDatabaseSeeder::class);
         } else {
             // We're seeding a tenant database
-            $this->call(TenantDatabaseSeeder::class);
+            $this->call(TenantLaratrustSeeder::class);
         }
     }
 }

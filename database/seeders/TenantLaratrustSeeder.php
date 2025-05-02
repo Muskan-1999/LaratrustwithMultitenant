@@ -12,6 +12,7 @@ class TenantLaratrustSeeder extends Seeder
     public function run()
     {
         $this->truncateLaratrustTables();
+        $this->call(ProjectSeeder::class);
 
         $config = Config::get('laratrust_seeder.roles_structure');
 

@@ -1,67 +1,112 @@
-<div class="px-6 py-4">
-    @include('components.layouts.breadcrumbs')
-    <!-- Top Controls Card -->
-    <div class="card bg-base-100 shadow-sm rounded-2xl p-4 mb-6">
-    <div class="flex flex-wrap items-center gap-4">
-    <!-- Layout Buttons -->
-    <div class="flex bg-base-200 rounded-lg overflow-hidden items-center">
-        <button wire:click="setLayout('list')" class="px-3 py-2 h-full {{ $layout === 'list' ? 'bg-neutral text-white' : 'hover:bg-base-300' }}">
-            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
-        </button>
-        <button wire:click="setLayout('grid')" class="px-3 py-2 h-full {{ $layout === 'grid' ? 'bg-neutral text-white' : 'hover:bg-base-300' }}">
-            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z"/></svg>
-        </button>
-        <button wire:click="setLayout('row')" class="px-3 py-2 h-full {{ $layout === 'row' ? 'bg-neutral text-white' : 'hover:bg-base-300' }}">
-            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5h18v2H3V5zm0 6h18v2H3v-2zm0 6h18v2H3v-2z"/></svg>
-        </button>
-    </div>
+<div class="space-y-8">
+    {{-- Breadcrumbs --}}
+    <x-layouts.breadcrumbs1 :items="$breadcrumbs" />
 
-    <!-- Group -->
-    <div class="flex flex-col justify-between h-[58px] w-[85px]">
-        <label class="text-xs font-medium text-neutral-500">Group</label>
-        <select class="select select-sm bg-base-200 text-sm font-medium border-none focus:outline-none">
-            <option selected>Client</option>
-            <option>Internal</option>
-        </select>
-    </div>
+    {{-- Page Header --}}
+    <x-layouts.page-header 
+    title="<span class='italic text-[#f43f1a]'>Together</span> the marbetsphere." 
+/>
+    <x-layouts.page-header highlight="Together" title="we are marbet." class="mb-6" />
 
-    <!-- Sort -->
-    <div class="flex flex-col justify-between h-[56px] w-[150px]">
-        <label class="text-xs font-medium text-neutral-500">Sort</label>
-        <select class="select select-sm bg-base-200 text-sm font-medium border-none focus:outline-none">
-            <option selected>Most Projects</option>
-            <option>Least Projects</option>
-        </select>
-    </div>
+    {{-- Filter Bar --}}
+    <x-layouts.filter-bar
+        :view="$viewMode"
+        :modes="['list', 'grid','row']"
+        property="viewMode"
+        search="search"
+        resetMethod="resetProjectFilters" />
 
-        <!-- Search and Buttons -->
-        <div class="flex items-end gap-2 ml-auto">
-            <input type="text" wire:model.live="search" placeholder="Search..." class="input input-sm bg-base-200 border-none w-[200px]" />
-            <button wire:click="resetSearch" type="button" class="btn btn-sm text-xs font-semibold bg-base-200 text-neutral hover:bg-base-300">✕ Reset</button>
-            <button class="btn btn-sm btn-outline text-xs font-semibold gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 019 17v-3.586L3.293 6.707A1 1 0 013 6V4z" />
-                </svg>
-                FILTER
-            </button>
+    {{-- List View --}}
+    @if ($viewMode === 'list')
+    <x-layouts.dynamic-list
+        :columns="['Name', 'Email', 'Role', 'Created At', 'Actions']"
+        :rows="$users->map(fn($user) => [
+        $user->name,
+        $user->email,
+        $user->roles->isNotEmpty() ? $user->roles->pluck('name')->join(', ') : 'No Role ',
+        \Carbon\Carbon::parse($user->created_at)->format('d.m.Y   H:i'),
+        'actions' => [
+        'view' => ['method' => 'viewUser', 'param' => $user->id],
+        'edit' => ['method' => 'editUser', 'param' => $user->id],
+        'delete' => ['method' => 'confirmDelete', 'param' => $user->id],
+    ],
+    ])" />
+    {{-- Grid View --}}
+    @elseif ($viewMode === 'grid')
+    <div class="grid gap-4 grid-cols-1">
+        @foreach ($users as $user)
+        <x-layouts.grid-card
+            :avatar="$user->client->avatar ?? null"
+            :title="$user->name"
+            :badges="[ 
+                        ['text' => 'ONGOING'], 
+                        ['text' => 'COMPLETED'] 
+                    ]"
+            :meta="[ 
+                    'Role' => $user->roles->isNotEmpty() ? $user->roles->pluck('name')->join(', ') : 'No Role Assigned', 
+                    'Status' => $user->status ?? 'Account Director' 
+                    ]"
+            actionText="Go to User →" />
+        @endforeach
+
+        @elseif ($viewMode === 'row')
+        @foreach ($roles as $role)
+        @php
+        $users = $roleUsers[$role->name] ?? collect();
+        @endphp
+
+        <x-layouts.row-card
+            :title="$role->name"
+            :meta="['Users' => $role->users_count]"
+            :actionMethod="'toggleItem'"
+            :actionParam="$role->name"
+            :isOpen="$openedItem === $role->name">
+            @if($users->isEmpty())
+            <p class="text-gray-500 text-sm">No users found for this role.</p>
+            @else
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+                @foreach ($users as $user)
+                <x-layouts.card
+                    :entity="$user"
+                    :fields="[
+                                'Role' => fn($e) => $e->roles->pluck('name')->join(', '),
+                                'Status' => 'status'
+                            ]"
+                    :badges="['3 ONGOING', '2 COMPLETED']"
+                    buttonLink="#"
+                    buttonText="Go to User →" />
+                @endforeach
+            </div>
+            @endif
+        </x-layouts.row-card>
+        @endforeach
+        @endif
+        @if($showViewModal)
+        <x-layouts.user-view-modal
+            :user="$selectedUser"
+            wire:model="showViewModal" />
+        @endif
+
+        @if($showEditModal)
+        <x-layouts.user-edit-modal
+            :user="$selectedUser"
+            :roles="$roles"
+            wire:model="showEditModal" />
+        @endif
+
+
+        @if($confirmingDelete)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="bg-white p-6 rounded-xl shadow-md w-full max-w-md">
+                <h2 class="text-lg font-bold mb-4 text-red-600">Delete User</h2>
+                <p class="mb-6 text-gray-600">
+                    Are you sure you want to delete <strong>{{ $userToDelete->name }}</strong>? This action cannot be undone.
+                </p>
+                <div class="flex justify-end space-x-2">
+                    <button class="btn btn-outline" wire:click="$set('confirmingDelete', false)">Cancel</button>
+                    <button class="btn btn-error" wire:click="deleteUser">Yes, Delete</button>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-
-
-       <!-- Content Section Card (List/Grid/Row) -->
-    <div class="card bg-white shadow-md">
-        <div class="card-body">
-        @if($layout === 'list')
-         @include('components.layouts.list-view')
-
-        @elseif($layout === 'grid')
-        {{-- Include your grid view here --}}
-             @include('components.layouts.grid-view')
-           
-        @else($layout === 'row')
-        {{-- Include your row view here --}}
-        @include('components.layouts.row-view')
         @endif
     </div>
-</div>

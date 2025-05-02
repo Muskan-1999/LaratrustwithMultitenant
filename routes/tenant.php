@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Http\Controllers\Tenant\DashboardController;
 use App\Livewire\Tenant\UserTable;
 use App\Livewire\UserInformation;
+use App\Livewire\Pages\ProjectsTable;
 // use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
 
 /*
@@ -53,9 +54,10 @@ Route::middleware([
         Route::get('/help-center', function () {
             return view('help_center.index');
         })->name('tenant.help-center');
-        Route::get('/project', function () {
-            return view('project.project');
-        })->name('tenant.project');
+        // Route::get('/project', function () {
+        //     return view('project.project');
+        // })->name('tenant.project');
+        Route::get('/project', ProjectsTable::class)->name('tenant.project');
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('tenant.dashboard');
       
 

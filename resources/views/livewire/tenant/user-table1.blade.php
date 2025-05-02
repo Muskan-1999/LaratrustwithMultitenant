@@ -1,4 +1,7 @@
-<div class="card bg-base-100 shadow-sm rounded-2xl p-4 mb-6">
+<div class="px-6 py-4">
+    @include('components.layouts.breadcrumbs')
+    <!-- Top Controls Card -->
+    <div class="card bg-base-100 shadow-sm rounded-2xl p-4 mb-6">
     <div class="flex flex-wrap items-center gap-4">
     <!-- Layout Buttons -->
     <div class="flex bg-base-200 rounded-lg overflow-hidden items-center">
@@ -42,5 +45,23 @@
                 FILTER
             </button>
         </div>
+    </div>
+</div>
+
+
+       <!-- Content Section Card (List/Grid/Row) -->
+    <div class="card bg-white shadow-md">
+        <div class="card-body">
+        @if($layout === 'list')
+         @include('components.layouts.list-view')
+
+        @elseif($layout === 'grid')
+        {{-- Include your grid view here --}}
+             @include('components.layouts.grid-view')
+           
+        @else($layout === 'row')
+        {{-- Include your row view here --}}
+        @include('components.layouts.row-view')
+        @endif
     </div>
 </div>
